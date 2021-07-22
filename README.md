@@ -3,12 +3,19 @@ Bienvenue Sur mon App de bibliothèque des dernièrs Repos PHP postés au jour l
 Pour profitez pleinement de l'application suivez les commandes suivantes :
 
 Composer install
+
 yarn install
+
 .env.local avec vos infos de bdd et MAILER_DSN=null://localhost
+
 bin/console d:d:c
+
 bin/console doctrine:migration:migrate
+
 bin/console d:l:f
+
 yarn encore dev
-symfony start
+
+symfony server:start
 
 Enjoy !
