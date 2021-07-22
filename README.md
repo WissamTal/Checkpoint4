@@ -12,7 +12,7 @@ bin/console d:d:c
 
 bin/console doctrine:migration:migrate
 
-bin/console d:l:f
+bin/console d:f:l
 
 yarn encore dev
 
