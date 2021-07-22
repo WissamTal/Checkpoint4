@@ -49,9 +49,17 @@ class Repos
      */
     private $githubID;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=RepoState::class, inversedBy="state")
+     */
+    private $repoState;
+
+
+
     public function __construct()
     {
         $this->languages = new ArrayCollection();
+
     }
 
     public function getId(): ?int
@@ -145,4 +153,22 @@ class Repos
 
         return $this;
     }
+
+    public function getWebUrl(): string
+    {
+        return 'https://github.com/'.$this->getName();
+    }
+
+    public function getRepoState(): ?RepoState
+    {
+        return $this->repoState;
+    }
+
+    public function setRepoState(?RepoState $repoState): self
+    {
+        $this->repoState = $repoState;
+
+        return $this;
+    }
+
 }

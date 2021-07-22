@@ -15,8 +15,11 @@
                         <p class="card-text">{{ repo.name }}</p>
                         <p class="card-text">{{ repo.description }}</p>
                         <p class="card-text">{{ repo.date }}</p>
-                        <p class="card-text">{{ repo.date }}</p>
+                        <a href="{{ repo.getWebUrl }}" class="card-link">{{ (repo.getWebUrl) }}</a>
                         <a href="{{ repo.url }}" class="card-link">{{ repo.url }}</a>
+                        {% if is_granted("ROLE_ADMIN") %}
+                        <a href="{{ path('repos_edit', {'id': repo.id }) }}" class="btn btn-success">edit</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

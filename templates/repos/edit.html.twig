@@ -1,0 +1,13 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Repo{% endblock %}
+
+{% block body %}
+    <h1>Edit Repo</h1>
+
+    {{ include('repos/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('repos_index') }}">back to list</a>
+
+{% endblock %}

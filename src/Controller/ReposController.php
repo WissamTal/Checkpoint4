@@ -4,12 +4,15 @@ namespace App\Controller;
 
 use App\Entity\Language;
 use App\Entity\Repos;
+use App\Form\ReposType;
 use App\Repository\LanguageRepository;
 use App\Repository\ReposRepository;
-use App\Service\CallApiService;
+use App\Repository\RepoStateRepository;
+use App\Service\repoService;
 use DateTime;
-use PhpParser\Node\Expr\Array_;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -20,135 +23,57 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class ReposController extends AbstractController
 {
 
-    private $client;
-
-    public function __construct(HttpClientInterface $client)
-    {
-        $this->client = $client;
-    }
-
     /**
      * @Route("/", name="index")
+     * @IsGranted("ROLE_USER")
      */
     public function index(ReposRepository $reposRepository): Response
     {
+        $repos = $reposRepository->findAll();
 
         return $this->render(
             'repos/index.html.twig',
             [
-                'repos' => $reposRepository->findAll()
+                'repos' => $repos,
+
             ]
         );
     }
 
     /**
-     * @Route("/test", name="")
+     * @Route("/{id}/edit", name="edit", methods={"GET", "POST"})
+     * @IsGranted("ROLE_ADMIN")
      */
-    public function addReposToDb(ReposRepository $reposRepository, LanguageRepository $languageRepository)
+    public function update(Request $request, Repos $repo): Response
     {
-        define("USERNAME", "WissamTal");
-        define("APIKEY", "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");
+        $form = $this->createForm(
+            ReposType::class,
+            $repo
+        );
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
 
-        $repos = $this->fetchGitHubPhpRepos();
-
-        $items = $repos['items'];
-        $allRepos = [];
-
-        //Boucle repo
-        foreach ($items as $item) {
-            $githubId = $item['id'];
-            $fullName = $item['full_name'];
-            $description = '';
-            if (!is_null($item['description'])) {
-                $description = $item['description'];
-            }
-            $date = $item['created_at'];
-            $language = $item['language'];
-            $url = $item['url'];
-
-            $registeredRepo = $reposRepository->findOneBy(['githubID' => $githubId]);
-
-            if (is_null($registeredRepo)) {
-                $createdRepo = new Repos();
-                $createdRepo->setName($fullName);
-                $createdRepo->setDescription($description);
-                $createdRepo->setDate($date);
-                $createdRepo->setGithubID($githubId);
-                $createdRepo->setUrl($url);
-
-                $allRepos[] = $createdRepo;
-            }
-
-            if (!is_null($registeredRepo)) {
-                $registeredRepo->setName($fullName);
-                $registeredRepo->setDescription($description);
-                $registeredRepo->setDate($date);
-                $registeredRepo->setUrl($url);
-
-                $allRepos[] = $registeredRepo;
-            }
+            return $this->redirectToRoute('repos_index');
         }
 
-        //Loop Register Language
-        $registeredlanguages = $languageRepository->findAll();
-
-        $languagesByName = [];
-        foreach ($registeredlanguages as $registeredLanguage) {
-            $registeredLanguageName = $registeredLanguage->getLanguageName();
-            $languagesByName[$registeredLanguageName] = $registeredLanguage;
-        }
-
-        //Loop language
-        foreach ($allRepos as $repo) {
-            $repoLanguages = $this->client->request(
-                'GET',
-                $repo->getUrl()."/languages",
-                [
-                    'auth_basic' => [USERNAME, APIKEY],
-                ]
-            );
-
-            $repoLanguages = $repoLanguages->toArray();
-
-            foreach ($repoLanguages as $language => $value) {
-                if (!array_key_exists($language, $languagesByName)) {
-                    $languageEntity = new Language();
-                    $languageEntity->setLanguageName($language);
-
-                    $languagesByName[$language] = $languageEntity;
-                }
-                $repo->addLanguage($languagesByName[$language]);
-            }
-        }
-
-        //Loop persist language
-        foreach ($languagesByName as $persistLanguage) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($persistLanguage);
-            $entityManager->flush();
-        }
-
-        //Loop persist repo
-        foreach ($allRepos as $persistRepo) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($persistRepo);
-            $entityManager->flush();
-        }
-    }
-
-    public function fetchGitHubPhpRepos(): array
-    {
-        $date = new DateTime();
-        $dateAsString = $date->format('Y-m-d');
-        $response = $this->client->request(
-            'GET',
-            'https://api.github.com/search/repositories?q=language:PHP+created:'.$dateAsString,
+        return $this->render(
+            'repos/edit.html.twig',
             [
-                'auth_basic' => [USERNAME, APIKEY],
+                'repo' => $repo,
+                'form' => $form->createView(),
             ]
         );
-
-        return $response->toArray();
     }
 
+
+    /**
+     * @Route("/api", name="api")
+     */
+
+    public function callRepoService(repoService $repoService) : Response
+    {
+        return $repoService ->addReposToDb();
+
+    }
 }

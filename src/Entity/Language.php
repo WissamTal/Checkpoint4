@@ -20,7 +20,7 @@ class Language
     private $id;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Repos::class, inversedBy="languages")
+     * @ORM\ManyToMany(targetEntity=Repos::class, inversedBy="languages", cascade={"persist"}))
      */
     private $name;
 
@@ -74,4 +74,5 @@ class Language
 
         return $this;
     }
+
 }

@@ -25,6 +25,7 @@ class UserFixtures extends Fixture
         $user->setPassword($this->passwordHasher->hashPassword(
             $user,
             'wiss'));
+        $user->setMail('Taleb.wissam@gmail.com');
 
         $manager->persist($user);
 
@@ -34,6 +35,7 @@ class UserFixtures extends Fixture
         $user->setPassword($this->passwordHasher->hashPassword(
             $user,
             'wissadmin'));
+        $user->setMail('Taleb.wissam@gmail.com');
 
         $manager->persist($user);
 
