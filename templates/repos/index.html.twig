@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ReposController!{% endblock %}
+
+{% block body %}
+    {% include 'navbar.html.twig' %}
+    <h1 class="" style="text-align: center;"> Repos PHP from Github</h1>
+
+   <div class="row row-cols-1 row-cols-md-3 g-4">
+
+        {% for repo in repos %}
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-text">{{ repo.name }}</p>
+                        <p class="card-text">{{ repo.description }}</p>
+                        <p class="card-text">{{ repo.date }}</p>
+                        <p class="card-text">{{ repo.date }}</p>
+                        <a href="{{ repo.url }}" class="card-link">{{ repo.url }}</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}
