@@ -6,10 +6,10 @@
     {% include 'navbar.html.twig' %}
 
     <h1> HELLO </h1>
-
+{%  if app.user is defined and not is_granted("ROLE_USER")%}
     <h2>Welcome to my App</h2>
     <span> If you like to enjoy full functionality of this App , Register and Enjoy </span>
-
+{% endif %}
     {% if is_granted("ROLE_USER") %}
         <span> If you want to see the GitHubRepo of the day, just click here to initialise the database ! <a
                     href="{{ path('repos_api') }}"><button> click me </button> </a></span>
