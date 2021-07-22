@@ -10,15 +10,9 @@ class RepoStateFixtures extends Fixture
 {
     public function load(ObjectManager $manager)
     {
-        $repoState = new RepoState();
-        $repoState->setName('NEW');
-
 
         $repoState = new RepoState();
-        $repoState->setName('MODIFY');
-
-        $repoState = new RepoState();
-        $repoState->setName('ARCHIVED');
+        $repoState->setName('New');
 
         $manager->persist($repoState);
 

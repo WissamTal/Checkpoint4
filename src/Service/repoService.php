@@ -41,7 +41,7 @@ class repoService
     public function addReposToDb()
     {
         define("USERNAME", "WissamTal");
-        define("APIKEY", "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");
+        define("APIKEY", "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");
 
         $repos = $this->synchronizeGithub();
 
