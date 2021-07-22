@@ -12,7 +12,7 @@ class RepoStateFixtures extends Fixture
     {
 
         $repoState = new RepoState();
-        $repoState->setName('New');
+        $repoState->setName('NEW');
 
         $manager->persist($repoState);
 
